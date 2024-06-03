@@ -7,3 +7,4 @@ numpy==1.21.0
 Cython==0.29.21
 matplotlib==3.4.2
 setuptools==70.0.0
+Werkzeug==2.0.1
