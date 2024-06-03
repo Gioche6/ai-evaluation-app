@@ -435,7 +435,7 @@ def calculate():
 @app.route('/radar/<title>')
 def radar(title):
     conn = None
-    data = []
+    data = {'labels': [], 'scores': []}
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         c = conn.cursor()
@@ -445,44 +445,61 @@ def radar(title):
             category, score = row
             if isinstance(score, Decimal):
                 score = float(score)  # Convert Decimal to float
-            data.append({'category': category, 'score': score})
+            data['labels'].append(category)
+            data['scores'].append(score)
         c.close()
-        print(f"Fetched radar data for {title}: {data}")  # Logging fetched data
     except Exception as e:
         print(f"Error fetching radar data: {e}")
     finally:
         if conn:
             conn.close()
-    
-    if not data:
+
+    if not data['labels']:
         return "No data found for the specified title.", 404
 
     return render_template('radar.html', title=title, radar_data=data)
 
-
-
 @app.route('/api/dashboard_data')
 def dashboard_data():
     conn = None
-    data = []
+    data = {'metrics': [], 'radar': [], 'systems': [], 'overall': []}
     try:
         conn = psycopg2.connect(DATABASE_URL, sslmode='require')
         c = conn.cursor()
-        c.execute('SELECT title, category, score FROM evaluations')
+        # Fetch average scores for radar chart
+        c.execute('''
+            SELECT category, AVG(score) as average_score
+            FROM evaluations
+            GROUP BY category
+        ''')
         rows = c.fetchall()
         for row in rows:
-            title, category, score = row
-            if isinstance(score, Decimal):
-                score = float(score)  # Convert Decimal to float
-            data.append({'title': title, 'category': category, 'score': score})
+            category, avg_score = row
+            if isinstance(avg_score, Decimal):
+                avg_score = float(avg_score)
+            data['metrics'].append(category)
+            data['radar'].append(avg_score)
+        
+        # Fetch overall scores for bar chart
+        c.execute('''
+            SELECT title, AVG(score) as overall_score
+            FROM evaluations
+            GROUP BY title
+        ''')
+        rows = c.fetchall()
+        for row in rows:
+            title, overall_score = row
+            if isinstance(overall_score, Decimal):
+                overall_score = float(overall_score)
+            data['systems'].append(title)
+            data['overall'].append(overall_score)
         c.close()
-        print(f"Fetched dashboard data: {data}")  # Logging fetched data
     except Exception as e:
         print(f"Error fetching dashboard data: {e}")
     finally:
         if conn:
             conn.close()
-    
+
     return jsonify(data)
 
 @app.route('/delete_result', methods=['POST'])
