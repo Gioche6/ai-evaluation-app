@@ -444,7 +444,7 @@ def radar(title):
         for row in rows:
             category, score = row
             if isinstance(score, Decimal):
-                score = float(score)
+                score = float(score)  # Convert Decimal to float
             data.append({'category': category, 'score': score})
         c.close()
     except Exception as e:
