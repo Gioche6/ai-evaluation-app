@@ -447,6 +447,7 @@ def radar(title):
                 score = float(score)  # Convert Decimal to float
             data.append({'category': category, 'score': score})
         c.close()
+        print(f"Fetched radar data for {title}: {data}")  # Logging fetched data
     except Exception as e:
         print(f"Error fetching radar data: {e}")
     finally:
@@ -457,6 +458,7 @@ def radar(title):
         return "No data found for the specified title.", 404
 
     return render_template('radar.html', title=title, radar_data=data)
+
 
 
 @app.route('/api/dashboard_data')
@@ -474,6 +476,7 @@ def dashboard_data():
                 score = float(score)  # Convert Decimal to float
             data.append({'title': title, 'category': category, 'score': score})
         c.close()
+        print(f"Fetched dashboard data: {data}")  # Logging fetched data
     except Exception as e:
         print(f"Error fetching dashboard data: {e}")
     finally:
