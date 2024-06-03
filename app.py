@@ -3,6 +3,7 @@ import os
 import sqlite3
 import psycopg2
 import psycopg2.extras
+from decimal import Decimal
 
 app = Flask(__name__)
 
@@ -433,22 +434,27 @@ def calculate():
 
 @app.route('/radar/<title>')
 def radar(title):
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute('SELECT category, score FROM evaluations WHERE title = %s', (title,))
-    rows = c.fetchall()
-    conn.close()
-
-    radar_data = {category: 0 for category in main_metrics}
-    for row in rows:
-        category, score = row
-        if category in radar_data:
-            radar_data[category] = score
-
-    data = {
-        'labels': list(radar_data.keys()),
-        'scores': list(radar_data.values())
-    }
+    conn = None
+    data = []
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        c = conn.cursor()
+        c.execute('SELECT category, score FROM evaluations WHERE title = %s', (title,))
+        rows = c.fetchall()
+        for row in rows:
+            category, score = row
+            if isinstance(score, Decimal):
+                score = float(score)
+            data.append({'category': category, 'score': score})
+        c.close()
+    except Exception as e:
+        print(f"Error fetching radar data: {e}")
+    finally:
+        if conn:
+            conn.close()
+    
+    if not data:
+        return "No data found for the specified title.", 404
 
     return render_template('radar.html', title=title, radar_data=data)
 
