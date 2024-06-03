@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Evaluation Form</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .form-group select {
+            height: 100px;
+        }
+        .card-header h2 {
+            font-size: 1.5rem;
+        }
+        .card-body {
+            background-color: #f9f9f9;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">AI Evaluation Form</h1>
+        <form action="{{ url_for('calculate') }}" method="post" class="mt-4">
+            <div class="form-group">
+                <label for="title">AI System Title</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+            {% for category, criteria in categories.items() %}
+            <div class="category card my-4">
+                <div class="card-header">
+                    <h2>{{ category }}</h2>
+                </div>
+                <div class="card-body">
+                    {% for criterion in criteria %}
+                    <div class="form-group">
+                        <label>{{ criterion }}</label>
+                        <select name="{{ criterion }}" class="form-control" required>
+                            <option value="">Select...</option>
+                            {% if category == "Bias Detection and Mitigation" and criterion == "Representation in Training Data" %}
+                                <option value="1">Poor representation of diverse demographic groups.</option>
+                                <option value="2">Minimal representation with significant gaps.</option>
+                                <option value="3">Moderate representation but still lacking in some areas.</option>
+                                <option value="4">Good representation with minor gaps.</option>
+                                <option value="5">Excellent representation, comprehensively inclusive of diverse groups.</option>
+                            {% elif category == "Bias Detection and Mitigation" and criterion == "Inclusion of Underrepresented Groups" %}
+                                <option value="1">Ineffective inclusion of marginalized groups.</option>
+                                <option value="2">Minimal efforts with limited impact.</option>
+                                <option value="3">Moderate inclusion with noticeable improvements.</option>
+                                <option value="4">Effective inclusion with significant positive impact.</option>
+                                <option value="5">Highly effective inclusion, systematically addressing underrepresentation.</option>
+                            {% elif category == "Bias Detection and Mitigation" and criterion == "Addressing Known Gaps in Diversity" %}
+                                <option value="1">Not addressed.</option>
+                                <option value="2">Poorly addressed with minimal impact.</option>
+                                <option value="3">Moderately addressed with some impact.</option>
+                                <option value="4">Well addressed with significant improvements.</option>
+                                <option value="5">Fully addressed with comprehensive measures in place.</option>
+                            {% elif category == "Bias Detection and Mitigation" and criterion == "Performance Disparities Across Demographic Groups" %}
+                                <option value="1">Significant disparities.</option>
+                                <option value="2">Moderate disparities.</option>
+                                <option value="3">Some disparities but manageable.</option>
+                                <option value="4">Minor disparities.</option>
+                                <option value="5">No disparities, highly consistent performance.</option>
+                            {% elif category == "Bias Detection and Mitigation" and criterion == "Addressing Performance Disparities" %}
+                                <option value="1">Ineffective strategies.</option>
+                                <option value="2">Minimally effective strategies.</option>
+                                <option value="3">Moderately effective strategies.</option>
+                                <option value="4">Effective strategies with noticeable improvements.</option>
+                                <option value="5">Highly effective strategies, disparities well-managed.</option>
+                            {% elif category == "Bias Detection and Mitigation" and criterion == "Effectiveness of Bias Mitigation Techniques" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Bias Detection and Mitigation" and criterion == "Ongoing Efforts to Update Bias Mitigation" %}
+                                <option value="1">Poor efforts.</option>
+                                <option value="2">Minimal efforts.</option>
+                                <option value="3">Moderate efforts.</option>
+                                <option value="4">Good efforts.</option>
+                                <option value="5">Excellent efforts, continuously updated.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "Use of Interpretable Models or Techniques" %}
+                                <option value="1">Poor use of interpretable models.</option>
+                                <option value="2">Minimal use, not easily accessible.</option>
+                                <option value="3">Moderate use, somewhat accessible.</option>
+                                <option value="4">Good use, accessible.</option>
+                                <option value="5">Excellent use, highly accessible and understandable.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "Tailoring to Technical Literacy and Cultural Norms" %}
+                                <option value="1">Poor tailoring.</option>
+                                <option value="2">Minimal tailoring.</option>
+                                <option value="3">Moderate tailoring.</option>
+                                <option value="4">Good tailoring.</option>
+                                <option value="5">Excellent tailoring.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "Communication of Explanations" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "Comprehensive and Accessible Documentation" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "Explanation Tools Tailored to Local Contexts" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "Accessibility of Explanation Tools" %}
+                                <option value="1">Poor accessibility.</option>
+                                <option value="2">Minimal accessibility.</option>
+                                <option value="3">Moderate accessibility.</option>
+                                <option value="4">Good accessibility.</option>
+                                <option value="5">Excellent accessibility.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "User Understanding of AI Decisions" %}
+                                <option value="1">Poor understanding.</option>
+                                <option value="2">Minimal understanding.</option>
+                                <option value="3">Moderate understanding.</option>
+                                <option value="4">Good understanding.</option>
+                                <option value="5">Excellent understanding.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "Measures to Build and Maintain Trust" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Explainability and Transparency" and criterion == "Feedback Mechanisms for Comprehension and Trust" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Adherence to Ethical Guidelines" %}
+                                <option value="1">Poor adherence.</option>
+                                <option value="2">Minimal adherence.</option>
+                                <option value="3">Moderate adherence.</option>
+                                <option value="4">Good adherence.</option>
+                                <option value="5">Excellent adherence.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Integration of Ethical Principles" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Exceeding Ethical Standards" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Effectiveness of Ethical Review Processes" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Review and Update of Ethical Processes" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Inclusivity in Ethical Compliance" %}
+                                <option value="1">Not inclusive.</option>
+                                <option value="2">Minimally inclusive.</option>
+                                <option value="3">Moderately inclusive.</option>
+                                <option value="4">Inclusive.</option>
+                                <option value="5">Highly inclusive.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Transparency in Data Usage and Consent" %}
+                                <option value="1">Not transparent.</option>
+                                <option value="2">Minimally transparent.</option>
+                                <option value="3">Moderately transparent.</option>
+                                <option value="4">Transparent.</option>
+                                <option value="5">Highly transparent.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Effectiveness of Data Protection Measures" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Ethical Guidelines" and criterion == "Implementation of Data Sovereignty Provisions" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Integration of Local Knowledge and Practices" %}
+                                <option value="1">Poor integration.</option>
+                                <option value="2">Minimal integration.</option>
+                                <option value="3">Moderate integration.</option>
+                                <option value="4">Good integration.</option>
+                                <option value="5">Excellent integration.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Effectiveness of Stakeholder Consultation" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Respect for Cultural Practices and Values" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Adaptability to Socio-Economic Contexts" %}
+                                <option value="1">Not adaptable.</option>
+                                <option value="2">Minimally adaptable.</option>
+                                <option value="3">Moderately adaptable.</option>
+                                <option value="4">Adaptable.</option>
+                                <option value="5">Highly adaptable.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Functionality in Resource-Constrained Settings" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Testing and Validation Across Settings" %}
+                                <option value="1">Poor testing/validation.</option>
+                                <option value="2">Minimal testing/validation.</option>
+                                <option value="3">Moderate testing/validation.</option>
+                                <option value="4">Good testing/validation.</option>
+                                <option value="5">Excellent testing/validation.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Stakeholder Engagement Mechanisms" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Collection and Integration of Stakeholder Feedback" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Socio-Cultural Relevance" and criterion == "Implementation and Communication of Updates Based on Feedback" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Governance and Accountability" and criterion == "Clarity of Roles and Responsibilities" %}
+                                <option value="1">Poor clarity.</option>
+                                <option value="2">Minimal clarity.</option>
+                                <option value="3">Moderate clarity.</option>
+                                <option value="4">Good clarity.</option>
+                                <option value="5">Excellent clarity.</option>
+                            {% elif category == "Governance and Accountability" and criterion == "Comprehensiveness of Governance Framework" %}
+                                <option value="1">Not comprehensive.</option>
+                                <option value="2">Minimally comprehensive.</option>
+                                <option value="3">Moderately comprehensive.</option>
+                                <option value="4">Comprehensive.</option>
+                                <option value="5">Highly comprehensive.</option>
+                            {% elif category == "Governance and Accountability" and criterion == "Effectiveness of Accountability Frameworks" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Governance and Accountability" and criterion == "Regular Audits and Assessments" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Governance and Accountability" and criterion == "Accessibility and Effectiveness of Grievance Mechanisms" %}
+                                <option value="1">Inaccessible/Ineffective.</option>
+                                <option value="2">Minimally accessible/Effective.</option>
+                                <option value="3">Moderately accessible/Effective.</option>
+                                <option value="4">Accessible/Effective.</option>
+                                <option value="5">Highly accessible/Effective.</option>
+                            {% elif category == "Governance and Accountability" and criterion == "Timeliness and Satisfactory Resolution of Grievances" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Governance and Accountability" and criterion == "Transparency in Addressing Grievances" %}
+                                <option value="1">Not transparent.</option>
+                                <option value="2">Minimally transparent.</option>
+                                <option value="3">Moderately transparent.</option>
+                                <option value="4">Transparent.</option>
+                                <option value="5">Highly transparent.</option>
+                            {% elif category == "Continuous Monitoring and Evaluation" and criterion == "Implementation of Continuous Monitoring Processes" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Continuous Monitoring and Evaluation" and criterion == "Effectiveness of Monitoring Tools and Technologies" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Continuous Monitoring and Evaluation" and criterion == "Frequency of Updates and Maintenance" %}
+                                <option value="1">Infrequent.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Frequent.</option>
+                                <option value="5">Very frequent.</option>
+                            {% elif category == "Continuous Monitoring and Evaluation" and criterion == "Appropriateness of Update and Maintenance Schedules" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Continuous Monitoring and Evaluation" and criterion == "Effectiveness of Emergency Update Protocols" %}
+                                <option value="1">Ineffective.</option>
+                                <option value="2">Minimally effective.</option>
+                                <option value="3">Moderately effective.</option>
+                                <option value="4">Effective.</option>
+                                <option value="5">Highly effective.</option>
+                            {% elif category == "Continuous Monitoring and Evaluation" and criterion == "Implementation of Feedback Loops for Improvement" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Continuous Monitoring and Evaluation" and criterion == "Regular Reviews and Updates Based on Feedback" %}
+                                <option value="1">Poor.</option>
+                                <option value="2">Minimal.</option>
+                                <option value="3">Moderate.</option>
+                                <option value="4">Good.</option>
+                                <option value="5">Excellent.</option>
+                            {% elif category == "Continuous Monitoring and Evaluation" and criterion == "Adaptability and Responsiveness to Changes" %}
+                                <option value="1">Not adaptable.</option>
+                                <option value="2">Minimally adaptable.</option>
+                                <option value="3">Moderately adaptable.</option>
+                                <option value="4">Adaptable.</option>
+                                <option value="5">Highly adaptable.</option>
+                            {% endif %}
+                        </select>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Calculate</button>
+        </form>
+    </div>
+</body>
+</html>

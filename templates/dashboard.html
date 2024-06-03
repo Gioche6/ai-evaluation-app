@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Evaluation System - Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 20px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        .chart-container {
+            position: relative;
+            width: 80%;
+            margin: auto;
+        }
+        .btn-download {
+            margin-top: 20px;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">AI Evaluation System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/form">Evaluation Form</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/results">Results</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/documentation">Documentation</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="text-center">Dashboard</h1>
+        <div class="chart-container">
+            <canvas id="radarChart"></canvas>
+        </div>
+        <div class="text-center btn-download">
+            <div class="btn-group">
+                <button id="downloadRadarPng" class="btn btn-primary">Download Radar as PNG</button>
+                <button id="downloadRadarJpeg" class="btn btn-primary">Download Radar as JPEG</button>
+            </div>
+        </div>
+        <div class="chart-container">
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="text-center btn-download">
+            <div class="btn-group">
+                <button id="downloadBarPng" class="btn btn-primary">Download Bar as PNG</button>
+                <button id="downloadBarJpeg" class="btn btn-primary">Download Bar as JPEG</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Fetch data for radar chart and bar chart
+        fetch('/api/dashboard_data')
+            .then(response => response.json())
+            .then(data => {
+                // Radar chart data
+                const radarCtx = document.getElementById('radarChart').getContext('2d');
+                const radarChart = new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: data.metrics,
+                        datasets: [{
+                            label: 'Average Scores',
+                            data: data.radar,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scale: {
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Bar chart data
+                const barCtx = document.getElementById('barChart').getContext('2d');
+                const barChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.systems,
+                        datasets: [{
+                            label: 'Overall Scores',
+                            data: data.overall,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+
+                // Download buttons for radar chart
+                document.getElementById('downloadRadarPng').addEventListener('click', function() {
+                    const link = document.createElement('a');
+                    link.href = radarChart.toBase64Image();
+                    link.download = 'average_radar_chart.png';
+                    link.click();
+                });
+
+                document.getElementById('downloadRadarJpeg').addEventListener('click', function() {
+                    const link = document.createElement('a');
+                    link.href = radarChart.toBase64Image('image/jpeg', 1.0);
+                    link.download = 'average_radar_chart.jpeg';
+                    link.click();
+                });
+
+                // Download buttons for bar chart
+                document.getElementById('downloadBarPng').addEventListener('click', function() {
+                    const link = document.createElement('a');
+                    link.href = barChart.toBase64Image();
+                    link.download = 'overall_scores_bar_chart.png';
+                    link.click();
+                });
+
+                document.getElementById('downloadBarJpeg').addEventListener('click', function() {
+                    const link = document.createElement('a');
+                    link.href = barChart.toBase64Image('image/jpeg', 1.0);
+                    link.download = 'overall_scores_bar_chart.jpeg';
+                    link.click();
+                });
+            });
+    </script>
+</body>
+</html>
