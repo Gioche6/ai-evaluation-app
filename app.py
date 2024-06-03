@@ -373,21 +373,8 @@ categories = {
     }
 }
 def get_db_connection():
-    if DATABASE_URL:
-        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
-    else:
-        conn = sqlite3.connect('local_database.db')
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     return conn
-
-def execute_query(query, params):
-    conn = get_db_connection()
-    c = conn.cursor()
-    if DATABASE_URL:
-        c.execute(query, params)
-    else:
-        c.execute(query.replace('%s', '?'), params)
-    conn.commit()
-    conn.close()
 
 @app.route('/')
 def home():
@@ -407,7 +394,7 @@ def results():
     
     results_dict = {}
     for row in rows:
-        title, category, score = row[0], row[1], row[2]
+        title, category, score = row
         if title not in results_dict:
             results_dict[title] = {metric: None for metric in main_metrics}
             results_dict[title]['Overall'] = None  # Initialize Overall key
@@ -434,9 +421,13 @@ def calculate():
     averages = {category: round(sum(scores[category]) / len(scores[category]), 2) for category in main_metrics}
     overall_score = round(sum(averages.values()) / len(averages), 2)
 
+    conn = get_db_connection()
+    c = conn.cursor()
     for category, average in averages.items():
-        execute_query('INSERT INTO evaluations (title, category, score) VALUES (%s, %s, %s)', (title, category, average))
-    execute_query('INSERT INTO evaluations (title, category, score) VALUES (%s, %s, %s)', (title, 'Overall', overall_score))
+        c.execute('INSERT INTO evaluations (title, category, score) VALUES (%s, %s, %s)', (title, category, average))
+    c.execute('INSERT INTO evaluations (title, category, score) VALUES (%s, %s, %s)', (title, 'Overall', overall_score))
+    conn.commit()
+    conn.close()
 
     return render_template('summary.html', title=title, averages=averages, overall_score=overall_score)
 
@@ -444,16 +435,13 @@ def calculate():
 def radar(title):
     conn = get_db_connection()
     c = conn.cursor()
-    if DATABASE_URL:
-        c.execute('SELECT category, score FROM evaluations WHERE title = %s', (title,))
-    else:
-        c.execute('SELECT category, score FROM evaluations WHERE title = ?', (title,))
+    c.execute('SELECT category, score FROM evaluations WHERE title = %s', (title,))
     rows = c.fetchall()
     conn.close()
 
     radar_data = {category: 0 for category in main_metrics}
     for row in rows:
-        category, score = row[0], row[1]
+        category, score = row
         if category in radar_data:
             radar_data[category] = score
 
@@ -474,7 +462,7 @@ def dashboard_data():
 
     results_dict = {}
     for row in rows:
-        title, category, score = row[0], row[1], row[2]
+        title, category, score = row
         if title not in results_dict:
             results_dict[title] = {metric: None for metric in main_metrics}
             results_dict[title]['Overall'] = None
@@ -505,7 +493,11 @@ def dashboard_data():
 @app.route('/delete_result', methods=['POST'])
 def delete_result():
     title = request.form['title']
-    execute_query('DELETE FROM evaluations WHERE title = %s', (title,))
+    conn = get_db_connection()
+    c = conn.cursor()
+    c.execute('DELETE FROM evaluations WHERE title = %s', (title,))
+    conn.commit()
+    conn.close()
     return redirect(url_for('results'))
 
 @app.route('/dashboard')
