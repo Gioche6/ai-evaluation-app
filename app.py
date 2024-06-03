@@ -458,42 +458,28 @@ def radar(title):
 
     return render_template('radar.html', title=title, radar_data=data)
 
+
 @app.route('/api/dashboard_data')
 def dashboard_data():
-    conn = get_db_connection()
-    c = conn.cursor()
-    c.execute('SELECT title, category, score FROM evaluations')
-    rows = c.fetchall()
-    conn.close()
-
-    results_dict = {}
-    for row in rows:
-        title, category, score = row
-        if title not in results_dict:
-            results_dict[title] = {metric: None for metric in main_metrics}
-            results_dict[title]['Overall'] = None
-        results_dict[title][category] = score
-
-    # Compute the averages for the radar chart
-    radar_scores = {metric: 0 for metric in main_metrics}
-    count = len(results_dict)
-    for scores in results_dict.values():
-        for metric in main_metrics:
-            if scores[metric] is not None:
-                radar_scores[metric] += scores[metric]
-    for metric in radar_scores:
-        radar_scores[metric] = round(radar_scores[metric] / count, 2) if count > 0 else 0
-
-    # Prepare data for the bar chart
-    overall_scores = [scores['Overall'] for scores in results_dict.values()]
-    titles = [title for title in results_dict.keys()]
-
-    data = {
-        'metrics': main_metrics,
-        'radar': list(radar_scores.values()),
-        'systems': titles,
-        'overall': overall_scores
-    }
+    conn = None
+    data = []
+    try:
+        conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+        c = conn.cursor()
+        c.execute('SELECT title, category, score FROM evaluations')
+        rows = c.fetchall()
+        for row in rows:
+            title, category, score = row
+            if isinstance(score, Decimal):
+                score = float(score)  # Convert Decimal to float
+            data.append({'title': title, 'category': category, 'score': score})
+        c.close()
+    except Exception as e:
+        print(f"Error fetching dashboard data: {e}")
+    finally:
+        if conn:
+            conn.close()
+    
     return jsonify(data)
 
 @app.route('/delete_result', methods=['POST'])
