@@ -7,22 +7,36 @@ Results Page: View the evaluation results and see detailed scores for each metri
 Dashboard: Access the dashboard to see aggregated scores across multiple evaluations.
 Download Charts: Download radar and bar charts as PNG or JPEG images for further analysis.
 Getting Started
-To get started with the AI Evaluation App, follow these steps:
-
-Clone the Repository: Clone this repository to your local machine using git clone https://github.com/Gioche6/ai-evaluation-app.git.
-Install Dependencies: Navigate to the project directory and install dependencies using npm install.
-Start the Application: Run the application with npm start.
-Access the App: Open your web browser and go to http://localhost:3000 to access the application.
+Prerequisites
+Node.js (version 12 or higher)
+npm (Node.js package manager)
+Installation
+Clone the Repository:
+bash
+Copy code
+git clone https://github.com/Gioche6/ai-evaluation-app.git
+Install Dependencies:
+bash
+Copy code
+cd ai-evaluation-app
+npm install
+Start the Application:
+bash
+Copy code
+npm start
+Access the App:
+Open your web browser and go to http://localhost:3000 to access the application.
 Usage
-Once the application is running, you can perform the following actions:
-
 Fill out the evaluation form with relevant data.
 View the evaluation results on the Results page.
 Access the Dashboard to see aggregated scores across evaluations.
 Download radar and bar charts for further analysis.
 Contributing
-Contributions are welcome! If you have any ideas, suggestions, or bug fixes, please open an issue or submit a pull request.
+We welcome contributions to improve the AI Evaluation App! If you have any ideas, suggestions, or bug fixes, please open an issue or submit a pull request.
 
 License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
+Acknowledgements
+This project was built using Chart.js for chart visualization.
+Special thanks to all contributors who helped make this project better.
